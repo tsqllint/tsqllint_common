@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>TSQLLINT_COMMON</id>
+    <version>$version$</version>
+    <authors>Nathan Boyd</authors>
+    <owners>Nathan Boyd</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Common interfaces for TSQLLINT Console, Lib, and Plugins</description>
+    <copyright>Copyright 2017</copyright>
+  </metadata>
+  <files>
+    <file src=".\TSQLLINT_COMMON\bin\Release\netstandard2.0\TSQLLINT_COMMON.dll" target="lib\netstandard2.0"/>
+    <file src=".\TSQLLINT_COMMON\bin\Release\netcoreapp2.0\TSQLLINT_COMMON.dll" target="lib\netcoreapp2.0"/>
+    <file src=".\TSQLLINT_COMMON\bin\Release\net452\TSQLLINT_COMMON.dll" target="lib\net452"/>
+  </files>
+</package>

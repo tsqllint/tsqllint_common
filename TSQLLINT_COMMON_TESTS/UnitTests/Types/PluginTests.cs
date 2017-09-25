@@ -9,7 +9,7 @@ namespace TSQLLINT_COMMON_TESTS
         public void TestPlugin()
         {
             var testPlugin = new TestPlugin();
-            Assert.Throws<NotImplementedException>(() => { testPlugin.PerformAction(null); });
+            Assert.Throws<NotImplementedException>(() => { testPlugin.PerformAction(null, null); });
         }
     }
 }

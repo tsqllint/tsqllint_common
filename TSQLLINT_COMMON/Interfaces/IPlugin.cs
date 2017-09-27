@@ -2,6 +2,6 @@
 {
     public interface IPlugin
     {
-        IPluginResponse PerformAction(IPluginContext context, IReporter reporter);
+        void PerformAction(IPluginContext context, IReporter reporter);
     }
 }

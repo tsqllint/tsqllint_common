@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSQLLINT_COMMON", "TSQLLINT_COMMON\TSQLLINT_COMMON.csproj", "{BA93055D-76AE-4C24-AEA6-BBB90EDC4655}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSQLLint.Common", "TSQLLint.Common\TSQLLint.Common.csproj", "{BA93055D-76AE-4C24-AEA6-BBB90EDC4655}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSQLLINT_COMMON_TESTS", "TSQLLINT_COMMON_TESTS\TSQLLINT_COMMON_TESTS.csproj", "{E0C267EF-75BE-4DDF-9AF3-1EFE2226E431}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSQLLint.Common.Tests", "TSQLLint.Common.Tests\TSQLLint.Common.Tests.csproj", "{E0C267EF-75BE-4DDF-9AF3-1EFE2226E431}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolitionItems", "SolitionItems", "{16EB0E25-8B51-4117-8E9E-097E88FC8FBC}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		appveyor.yml = appveyor.yml
-		TSQLLINT_COMMON.nuspec = TSQLLINT_COMMON.nuspec
+		TSQLLint.Common.nuspec = TSQLLint.Common.nuspec
 	EndProjectSection
 EndProject
 Global

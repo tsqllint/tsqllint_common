@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 
-namespace TSQLLINT_COMMON_TESTS
+namespace TSQLLint.Common.Tests
 {
     public class PluginTests
     {

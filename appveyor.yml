@@ -16,14 +16,14 @@ init:
 
 before_build:
 - cmd: dotnet --version
-- cmd: dotnet restore ./TSQLLINT_COMMON/TSQLLINT_COMMON.csproj --verbosity m
+- cmd: dotnet restore ./TSQLLint.Common/TSQLLint.Common.csproj --verbosity m
 
 build_script:
 - cmd: dotnet build --configuration Release
 
 test_script:
-- cmd: dotnet restore ./TSQLLINT_COMMON_TESTS/TSQLLINT_COMMON_TESTS.csproj --verbosity m
-- cmd: cd TSQLLINT_COMMON_TESTS
+- cmd: dotnet restore ./TSQLLint.Common.Tests/TSQLLint.Common.Tests.csproj --verbosity m
+- cmd: cd TSQLLint.Common.Tests
 - cmd: dotnet test
 
 for:
@@ -35,8 +35,8 @@ for:
   configuration: Release
 
   after_build:
-  - cmd: dotnet publish ./TSQLLINT_COMMON/TSQLLINT_COMMON.csproj --configuration Release --framework net452
-  - cmd: nuget pack TSQLLINT_COMMON.nuspec -properties Configuration=Release -Version %APPVEYOR_BUILD_VERSION%
+  - cmd: dotnet publish ./TSQLLint.Common/TSQLLint.Common.csproj --configuration Release --framework net452
+  - cmd: nuget pack TSQLLint.Common.nuspec -properties Configuration=Release -Version %APPVEYOR_BUILD_VERSION%
   
   artifacts:
    - path: '**\*.nupkg'

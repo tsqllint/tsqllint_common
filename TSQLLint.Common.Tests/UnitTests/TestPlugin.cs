@@ -1,7 +1,6 @@
 ﻿using System;
-using TSQLLINT_COMMON;
 
-namespace TSQLLINT_COMMON_TESTS
+namespace TSQLLint.Common.Tests
 {
     public class TestPlugin : IPlugin
     {

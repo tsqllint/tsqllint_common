@@ -1,4 +1,4 @@
-﻿namespace TSQLLINT_COMMON
+﻿namespace TSQLLint.Common
 {
     public interface IRuleViolation
     {

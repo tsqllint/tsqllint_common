@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "TSQLLint.Common": {
+      "commandName": "Project"
+    }
+  }
+}

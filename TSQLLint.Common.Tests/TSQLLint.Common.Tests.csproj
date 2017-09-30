@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>TSQLLint.Common.Tests</AssemblyName>
+    <RootNamespace>TSQLLint.Common.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TSQLLINT_COMMON\TSQLLINT_COMMON.csproj" />
+    <ProjectReference Include="..\TSQLLint.Common\TSQLLint.Common.csproj" />
   </ItemGroup>
 
 </Project>

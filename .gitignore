@@ -33,3 +33,7 @@ msbuild.wrn
 
 # Nuget Package
 *.nupkg
+
+.idea
+
+artifacts

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp5.0</TargetFramework>
     <AssemblyName>TSQLLint.Common.Tests</AssemblyName>
     <RootNamespace>TSQLLint.Common.Tests</RootNamespace>
   </PropertyGroup>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TSQLLint.Common\TSQLLint.Common.csproj" />
+    <ProjectReference Include="../TSQLLint.Common/TSQLLint.Common.csproj" />
   </ItemGroup>
 
 </Project>

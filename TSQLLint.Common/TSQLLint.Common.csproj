@@ -1,11 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp2.0;net452</TargetFrameworks>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <TargetFrameworks>netstandard2.1;netcoreapp5.0</TargetFrameworks>
+    <PackageId>TSQLLint.Common</PackageId>
+    <Authors>Nathan Boyd</Authors>
+    <Company>TSQLLint</Company>
+    <Owners>Nathan Boyd</Owners>
+    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+    <Description>Common interfaces for TSQLLint Console, Lib, and Plugins</Description>
+    <PackageTags>linting;mssql;tsql</PackageTags>
+    <Copyright>Copyright 2017</Copyright>
+    <Version Condition=" '$(ProjectAVersion)' != '' ">$(ProjectAVersion)</Version>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\AssemblyInfo.cs">
-      <Link>AssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
 </Project>

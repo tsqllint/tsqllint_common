@@ -1,12 +1,7 @@
-### build, test, package
+# TSQLLint.Common
 
-```
-./scripts/build.sh
-```
+[![buddy pipeline](https://app.buddy.works/engineernathan/tsqllint-common/pipelines/pipeline/344542/badge.svg?token=00478465fbc94c1ddcabd6f7f6037ee187ca041cfc164cf2f329ad17fe5aae4d "buddy pipeline")](https://app.buddy.works/engineernathan/tsqllint-common/pipelines/pipeline/344542)
 
-### install pre-release version
+## Contributing
 
-```
-dotnet add ConsoleApp1 package TSQLLint.Common \
-    -s /Users/nboyd/git/tsqllint_common/artifacts --prerelease
-```
+Developers wishing to contribute to this project shold review the [CONTRIBUTING.md](./CONTRIBUTING.md) document.

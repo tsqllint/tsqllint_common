@@ -40,6 +40,8 @@ else
 	VERSION="$TAG"-"$BRANCH_NAME"-"$HEAD_COMMIT"-"$HEAD_COMMIT_DATE"-"$GIT_STATE"
 fi
 
+VERSION="${VERSION//[_]/-}"
+
 echo "#########################################################"
 echo "# Branch Name: ${BRANCH_NAME}                            "
 echo "# Git State:   ${GIT_STATE}                            "
@@ -67,11 +69,10 @@ else
     exit 1
 fi
 
-
 function echoBlockMessage () {
   MESSAGE=$1
   printf "\n#########################################################"
-  printf "\n# $MESSAGE"
+  printf "\n# %s" "$MESSAGE"
   printf "\n#########################################################"
   printf "\n"
   printf "\n"

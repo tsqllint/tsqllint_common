@@ -32,6 +32,9 @@ HEAD_COMMIT_DATE=$(git log -1 --format=%cd --date=format:'%Y%m%d')
 
 BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
 
+# replace / ( like in "pull/7" ) with -
+BRANCH_NAME="${BRANCH_NAME//[\/]/-}"
+
 RELEASE="false"
 if [ "$HEAD_COMMIT" == "$TAG_COMMIT" ] && [ "$GIT_STATE" == "clean" ]; then
 	VERSION="$TAG"
@@ -42,9 +45,6 @@ fi
 
 # replace _ with -
 VERSION="${VERSION//[_]/-}"
-
-# replace / with -
-VERSION="${VERSION//[/]/-}"
 
 echo "#########################################################"
 echo "# Branch Name: ${BRANCH_NAME}                            "

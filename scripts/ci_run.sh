@@ -40,7 +40,11 @@ else
 	VERSION="$TAG"-"$BRANCH_NAME"-"$HEAD_COMMIT"-"$HEAD_COMMIT_DATE"-"$GIT_STATE"
 fi
 
+# replace _ with -
 VERSION="${VERSION//[_]/-}"
+
+# replace / with -
+VERSION="${VERSION//[/]/-}"
 
 echo "#########################################################"
 echo "# Branch Name: ${BRANCH_NAME}                            "

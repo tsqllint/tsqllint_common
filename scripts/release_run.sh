@@ -84,4 +84,6 @@ if [[ -z "$GITHUB_TOKEN" ]]; then
     exit 1
 fi
 
+gh auth login
+
 gh release create "$VERSION" -d

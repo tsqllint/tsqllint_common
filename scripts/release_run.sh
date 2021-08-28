@@ -74,7 +74,7 @@ fi
 function echoBlockMessage () {
   MESSAGE=$1
   printf "\n#########################################################"
-  printf "\n# $MESSAGE"
+  printf "\n# %s" "$MESSAGE"
   printf "\n#########################################################"
   printf "\n"
   printf "\n"
@@ -88,6 +88,6 @@ if [[ -z "$GITHUB_TOKEN" ]]; then
     exit 1
 fi
 
-gh auth login gh auth login --with-token $GITHUB_TOKEN
+gh auth login gh auth login --with-token "$GITHUB_TOKEN"
 
 gh release create "$VERSION" -d

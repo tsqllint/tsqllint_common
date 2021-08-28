@@ -30,7 +30,11 @@ TAG="$(git describe --abbrev=0 --tags "${TAG_COMMIT}" 2>/dev/null || true)"
 HEAD_COMMIT="$(git rev-parse --short HEAD)"
 HEAD_COMMIT_DATE=$(git log -1 --format=%cd --date=format:'%Y%m%d')
 
-BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
+# replace / ( like in "pull/7" ) with -
+BRANCH_NAME="${BRANCH_NAME//[\/]/-}"
+
+# replace underscores with -
+BRANCH_NAME="${BRANCH_NAME//[_]/-}"
 
 RELEASE="false"
 if [ "$HEAD_COMMIT" == "$TAG_COMMIT" ] && [ "$GIT_STATE" == "clean" ]; then
@@ -77,5 +81,13 @@ function echoBlockMessage () {
 }
 
 echoBlockMessage "creating release"
+
+if [[ -z "$GITHUB_TOKEN" ]]; then
+    echoMessage "GITHUB_TOKEN is not set in the environment."
+    echoMessage "Artifacts will not be pushed to Github."
+    exit 1
+fi
+
+gh auth login gh auth login --with-token $GITHUB_TOKEN
 
 gh release create "$VERSION" -d

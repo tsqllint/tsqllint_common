@@ -35,6 +35,9 @@ BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
 # replace / ( like in "pull/7" ) with -
 BRANCH_NAME="${BRANCH_NAME//[\/]/-}"
 
+# replace underscores with -
+BRANCH_NAME="${BRANCH_NAME//[_]/-}"
+
 RELEASE="false"
 if [ "$HEAD_COMMIT" == "$TAG_COMMIT" ] && [ "$GIT_STATE" == "clean" ]; then
 	VERSION="$TAG"
@@ -69,7 +72,6 @@ else
     echo "Version number failed validation: '$VERSION'"
     exit 1
 fi
-
 
 function echoBlockMessage () {
   MESSAGE=$1

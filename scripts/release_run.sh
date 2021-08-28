@@ -84,6 +84,6 @@ if [[ -z "$GITHUB_TOKEN" ]]; then
     exit 1
 fi
 
-gh auth login --hostname github.com
+gh config set git_protocol ssh --host github.com
 
 gh release create "$VERSION" -d

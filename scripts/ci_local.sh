@@ -6,5 +6,5 @@ docker run \
     -v "$(pwd)":/app \
     -v "$(pwd)/artifacts":/artifacts \
     --rm \
-    mcr.microsoft.com/dotnet/sdk:5.0 \
+    nathanboyd/github_cli:0.0.2 \
     /app/scripts/ci_run.sh

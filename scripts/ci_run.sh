@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /app/scripts/script.sh
+source /app/scripts/setup.sh
 
 echoBlockMessage "restoring project"
 

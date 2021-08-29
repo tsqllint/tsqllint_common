@@ -80,4 +80,6 @@ echoBlockMessage "creating release"
 
 gh auth login --with-token < $GITHUB_TOKEN_FILE
 
+git remote -v
+
 gh release create "$VERSION" -d

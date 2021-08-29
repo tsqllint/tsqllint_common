@@ -78,7 +78,7 @@ function echoBlockMessage () {
 
 echoBlockMessage "creating release"
 
-gh auth login --with-token < $GITHUB_TOKEN_FILE
+gh auth login  --hostname "github.com" --with-token < "$GITHUB_TOKEN_FILE"
 
 git remote -v
 

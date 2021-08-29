@@ -78,12 +78,6 @@ function echoBlockMessage () {
 
 echoBlockMessage "creating release"
 
-if [[ -z "$GITHUB_TOKEN" ]]; then
-    echoMessage "GITHUB_TOKEN is not set in the environment."
-    echoMessage "Artifacts will not be pushed to Github."
-    exit 1
-fi
-
-gh config set git_protocol ssh --host github.com
+gh auth login --with-token < $GITHUB_TOKEN_FILE
 
 gh release create "$VERSION" -d

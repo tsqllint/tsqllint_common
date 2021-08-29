@@ -63,3 +63,5 @@ gh auth login  --hostname "github.com" --with-token < "$GITHUB_TOKEN_FILE"
 gh release create "$VERSION" -d /artifacts/*.nupkg
 
 echoMessage "done"
+
+exit 0

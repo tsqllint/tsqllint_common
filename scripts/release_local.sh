@@ -7,4 +7,4 @@ docker run \
     -v "$(pwd)/artifacts":/artifacts \
     --rm \
     nathanboyd/github_cli:0.0.2 \
-    /app/scripts/ci_run.sh
+    /app/scripts/release_run.sh

@@ -1,16 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSQLLint.Common", "TSQLLint.Common\TSQLLint.Common.csproj", "{BA93055D-76AE-4C24-AEA6-BBB90EDC4655}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSQLLint.Common.Tests", "TSQLLint.Common.Tests\TSQLLint.Common.Tests.csproj", "{E0C267EF-75BE-4DDF-9AF3-1EFE2226E431}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolitionItems", "SolitionItems", "{16EB0E25-8B51-4117-8E9E-097E88FC8FBC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{16EB0E25-8B51-4117-8E9E-097E88FC8FBC}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		appveyor.yml = appveyor.yml
 		TSQLLint.Common.nuspec = TSQLLint.Common.nuspec
 	EndProjectSection
 EndProject

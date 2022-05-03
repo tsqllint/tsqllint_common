@@ -15,6 +15,11 @@ namespace TSQLLint.Common
             FileLines = fileLines;
         }
 
+        public void Insert(int index, string line)
+        {
+            FileLines.InsertRange(index, new[] { line });
+        }
+
         public void InsertRange(int index, IList<string> lines)
         {
             FileLines.InsertRange(index, lines);
@@ -23,6 +28,11 @@ namespace TSQLLint.Common
             {
                 v.Line += lines.Count;
             }
+        }
+
+        public void RemoveAt(int index)
+        {
+            RemoveRange(index, 1);
         }
 
         public void RemoveRange(int index, int count)

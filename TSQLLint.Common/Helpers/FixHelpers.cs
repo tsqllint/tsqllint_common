@@ -15,6 +15,19 @@ namespace TSQLLint.Infrastructure.Helpers
              where TFind : TSqlFragment
              where TReturn : TSqlFragment
         {
+            var node = FindNodes<TFind>(fileLines).FirstOrDefault(x =>
+            {
+                var fragment = getFragment(x);
+                return fragment?.StartLine == ruleViolation.Line &&
+                       fragment?.StartColumn == ruleViolation.Column;
+            });
+
+            return (getFragment(node), node);
+        }
+
+        public static List<T> FindNodes<T>(List<string> fileLines)
+             where T: TSqlFragment
+        {
             using var rdr = new StringReader(string.Join("\n", fileLines));
             var parser = new TSql150Parser(true, SqlEngineType.All);
             var tree = parser.Parse(rdr, out var errors);
@@ -24,17 +37,10 @@ namespace TSQLLint.Infrastructure.Helpers
                 throw new Exception($"Parsing failed. {string.Join(". ", errors.Select(x => x.Message))}");
             }
 
-            var checker = new FindViolatingNodeVisitor<TFind>();
+            var checker = new FindViolatingNodeVisitor<T>();
             tree.Accept(checker);
 
-            var node = checker.Nodes.FirstOrDefault(x =>
-            {
-                var fragment = getFragment(x);
-                return fragment?.StartLine == ruleViolation.Line &&
-                       fragment?.StartColumn == ruleViolation.Column;
-            });
-
-            return (getFragment(node), node);
+            return checker.Nodes;
         }
 
         public static T FindViolatingNode<T>(List<string> fileLines, IRuleViolation ruleViolation)

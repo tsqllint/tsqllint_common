@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TSQLLint.Common;
 
-namespace TSQLLint.Infrastructure.Helpers
+namespace TSQLLint.Common
 {
     public static class FixHelpers
     {
@@ -26,7 +25,7 @@ namespace TSQLLint.Infrastructure.Helpers
         }
 
         public static List<T> FindNodes<T>(List<string> fileLines)
-             where T: TSqlFragment
+             where T : TSqlFragment
         {
             using var rdr = new StringReader(string.Join("\n", fileLines));
             var parser = new TSql150Parser(true, SqlEngineType.All);

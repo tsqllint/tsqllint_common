@@ -31,13 +31,14 @@ namespace TSQLLint.Common.Tests.Helpers
         [Test]
         public void InsertInLine()
         {
+            var oldColumn = Violations[0].Column;
             var line = Lines[2];
             var content = "Prefix this";
 
             Subject.InsertInLine(2, 0, content);
 
             Assert.AreEqual(content + line, Lines[2]);
-            Assert.AreEqual(content.Length, Violations[0].Column);
+            Assert.AreEqual(content.Length + oldColumn, Violations[0].Column);
         }
 
         [Test]
@@ -127,11 +128,11 @@ namespace TSQLLint.Common.Tests.Helpers
                 Text = text;
             }
 
-            public int Column { get; set; }
+            public int Column { get; set; } = 1;
 
             public string FileName { get; }
 
-            public int Line { get; set; }
+            public int Line { get; set; } = 1;
 
             public string RuleName { get; }
 

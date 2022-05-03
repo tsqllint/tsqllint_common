@@ -28,7 +28,7 @@ namespace TSQLLint.Common
             FileLines[lineIndex] = line;
 
             foreach (var v in RuleViolations.Where(x => x.Line == lineIndex + 1
-                && x.Column >= charIndex))
+                && x.Column >= charIndex + 1))
             {
                 v.Column += content.Length;
             }
@@ -66,10 +66,10 @@ namespace TSQLLint.Common
             line = line.Remove(charIndex, length);
             FileLines[lineIndex] = line;
 
-            foreach (var v in RuleViolations.Where(x => x.Line == lineIndex - 1
-                && x.Column > charIndex))
+            foreach (var v in RuleViolations.Where(x => x.Column == lineIndex + 1
+                && x.Column >= charIndex + 1))
             {
-                v.Line -= length;
+                v.Column -= length;
             }
         }
 
@@ -77,7 +77,7 @@ namespace TSQLLint.Common
         {
             FileLines.RemoveRange(index, count);
 
-            foreach (var v in RuleViolations.Where(x => x.Line > index))
+            foreach (var v in RuleViolations.Where(x => x.Line >= index))
             {
                 v.Line -= count;
             }

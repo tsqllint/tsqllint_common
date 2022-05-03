@@ -1,14 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net5.0;net6.0</TargetFrameworks>
-    <PackageId>TSQLLint.Common</PackageId>
-    <Authors>Nathan Boyd</Authors>
-    <Company>TSQLLint</Company>
-    <Owners>Nathan Boyd</Owners>
-    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <Description>Common interfaces for TSQLLint Console, Lib, and Plugins</Description>
-    <PackageTags>linting;mssql;tsql</PackageTags>
-    <Copyright>Copyright 2022</Copyright>
-    <Version Condition=" '$(ProjectAVersion)' != '' ">$(ProjectAVersion)</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.1;net5.0;net6.0</TargetFrameworks>
+		<PackageId>TSQLLint.Common</PackageId>
+		<Authors>Nathan Boyd</Authors>
+		<Company>TSQLLint</Company>
+		<Owners>Nathan Boyd</Owners>
+		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+		<Description>Common interfaces for TSQLLint Console, Lib, and Plugins</Description>
+		<PackageTags>linting;mssql;tsql</PackageTags>
+		<Copyright>Copyright 2022</Copyright>
+		<Version Condition=" '$(ProjectAVersion)' != '' ">$(ProjectAVersion)</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SqlServer.DacFx" Version="150.5164.1" />
+	</ItemGroup>
 </Project>

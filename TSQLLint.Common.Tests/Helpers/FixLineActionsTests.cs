@@ -21,11 +21,13 @@ namespace TSQLLint.Common.Tests.Helpers
         [Test]
         public void Insert()
         {
+            var line = Violations[0].Line + 1;
             var content = "This is line 0";
 
             Subject.Insert(0, content);
 
             Assert.AreEqual(content, Lines[0]);
+            Assert.AreEqual(line, Violations[0].Line);
         }
 
         [Test]
@@ -88,6 +90,30 @@ namespace TSQLLint.Common.Tests.Helpers
         }
 
         [Test]
+        public void ReplaceAt()
+        {
+            var column = Lines[2].IndexOf("line") + 1;
+            Violations.Add(new RuleViolation(3, column));
+
+            Subject.RepaceInlineAt(2, 0, "THIS");
+
+            Assert.AreEqual(1, Violations[0].Column);
+            Assert.AreEqual(column, Violations[1].Column);
+        }
+
+        [Test]
+        public void ReplaceAtLonger()
+        {
+            var column = Lines[2].IndexOf("line") + 1;
+            Violations.Add(new RuleViolation(3, column));
+
+            Subject.RepaceInlineAt(2, 0, "THIS", 5);
+
+            Assert.AreEqual(1, Violations[0].Column);
+            Assert.AreEqual(column - 1, Violations[1].Column);
+        }
+
+        [Test]
         public void RemoveRange()
         {
             var count = Lines.Count;
@@ -136,16 +162,16 @@ namespace TSQLLint.Common.Tests.Helpers
         {
             Violations = new List<IRuleViolation>
             {
-                new RuleViolation(3, "Error")
+                new RuleViolation(3)
             };
         }
 
         private class RuleViolation : IRuleViolation
         {
-            public RuleViolation(int line, string text)
+            public RuleViolation(int line, int column = 1)
             {
                 Line = line;
-                Text = text;
+                Column = column;
             }
 
             public int Column { get; set; } = 1;

@@ -18,7 +18,7 @@ namespace TSQLLint.Common
 
         public void Insert(int index, string line)
         {
-            FileLines.InsertRange(index, new[] { line });
+            InsertRange(index, new[] { line });
         }
 
         public void InsertInLine(int lineIndex, int charIndex, string content)
@@ -28,7 +28,7 @@ namespace TSQLLint.Common
             FileLines[lineIndex] = line;
 
             foreach (var v in RuleViolations.Where(x => x.Line == lineIndex + 1
-                && x.Column >= charIndex + 1))
+                && x.Column > charIndex))
             {
                 v.Column += content.Length;
             }
@@ -38,7 +38,7 @@ namespace TSQLLint.Common
         {
             FileLines.InsertRange(index, lines);
 
-            foreach (var v in RuleViolations.Where(x => x.Line >= index + 1))
+            foreach (var v in RuleViolations.Where(x => x.Line > index))
             {
                 v.Line += lines.Count;
             }
@@ -67,7 +67,7 @@ namespace TSQLLint.Common
             FileLines[lineIndex] = line;
 
             foreach (var v in RuleViolations.Where(x => x.Column == lineIndex + 1
-                && x.Column >= charIndex + 1))
+                && x.Column > charIndex))
             {
                 v.Column -= length;
             }
@@ -77,9 +77,27 @@ namespace TSQLLint.Common
         {
             FileLines.RemoveRange(index, count);
 
-            foreach (var v in RuleViolations.Where(x => x.Line >= index + 1))
+            foreach (var v in RuleViolations.Where(x => x.Line > index))
             {
                 v.Line -= count;
+            }
+        }
+
+        public void RepaceInlineAt(int lineIndex, int charIndex, string content, int? replaceLength = null)
+        {
+            var line = FileLines[lineIndex];
+            line = line.Remove(charIndex, replaceLength ?? content.Length);
+            line = line.Insert(charIndex, content);
+            FileLines[lineIndex] = line;
+
+            if (replaceLength.HasValue && replaceLength != content.Length)
+            {
+                var lengthDiff = content.Length - replaceLength;
+                foreach (var v in RuleViolations.Where(x => x.Line == lineIndex + 1
+                    && x.Column > charIndex + content.Length))
+                {
+                    v.Column += lengthDiff.Value;
+                }
             }
         }
 

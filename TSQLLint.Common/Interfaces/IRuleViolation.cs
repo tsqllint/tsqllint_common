@@ -2,7 +2,7 @@
 {
     public interface IRuleViolation
     {
-        int Column { get; }
+        int Column { get; set; }
         string FileName { get; }
         int Line { get; set;  }
         string RuleName { get; }

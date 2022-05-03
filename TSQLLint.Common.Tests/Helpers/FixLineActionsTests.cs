@@ -50,6 +50,14 @@ namespace TSQLLint.Common.Tests.Helpers
         }
 
         [Test]
+        public void InsertRangeAfter()
+        {
+            Subject.InsertRange(3, new[] { "This is line 2.1", "This is line 2.2" });
+
+            Assert.AreEqual(3, Violations[0].Line);
+        }
+
+        [Test]
         public void RemoveAll()
         {
             Subject.RemoveAll(x => x.Contains("This is line"));
@@ -86,10 +94,22 @@ namespace TSQLLint.Common.Tests.Helpers
             var errorLine = Violations[0].Line;
             var remove = 2;
 
-            Subject.RemoveRange(0, remove);
+            Subject.RemoveRange(2, remove);
 
             Assert.AreEqual(count - remove, Lines.Count);
             Assert.AreEqual(errorLine - remove, Violations[0].Line);
+        }
+
+        [Test]
+        public void RemoveRangeAfter()
+        {
+            var count = Lines.Count;
+            var remove = 2;
+
+            Subject.RemoveRange(3, remove);
+
+            Assert.AreEqual(count - remove, Lines.Count);
+            Assert.AreEqual(3, Violations[0].Line);
         }
 
         [Test]

@@ -38,7 +38,7 @@ namespace TSQLLint.Common
         {
             FileLines.InsertRange(index, lines);
 
-            foreach (var v in RuleViolations.Where(x => x.Line >= index))
+            foreach (var v in RuleViolations.Where(x => x.Line >= index + 1))
             {
                 v.Line += lines.Count;
             }
@@ -77,7 +77,7 @@ namespace TSQLLint.Common
         {
             FileLines.RemoveRange(index, count);
 
-            foreach (var v in RuleViolations.Where(x => x.Line >= index))
+            foreach (var v in RuleViolations.Where(x => x.Line >= index + 1))
             {
                 v.Line -= count;
             }

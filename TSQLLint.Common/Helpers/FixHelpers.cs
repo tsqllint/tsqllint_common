@@ -66,6 +66,15 @@ namespace TSQLLint.Common
             return GetIndent(fileLines[statement.StartLine - 1]);
         }
 
+        public static string GetString(TSqlFragment fragment)
+        {
+            return string.Join(string.Empty, fragment.ScriptTokenStream
+                .Where((x, i) =>
+                    i >= fragment.FirstTokenIndex
+                    && i <= fragment.LastTokenIndex)
+                .Select(x => x.Text));
+        }
+
         private static string GetIndent(string ifLine)
         {
             var ifPrefix = new Regex(@"^\s+").Match(ifLine);

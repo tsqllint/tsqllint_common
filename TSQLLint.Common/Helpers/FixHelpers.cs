@@ -60,7 +60,7 @@ namespace TSQLLint.Common
 
         private static string GetIndent(string ifLine)
         {
-            var ifPrefix = new Regex(@"^\s").Match(ifLine);
+            var ifPrefix = new Regex(@"^\s+").Match(ifLine);
 
             var indent = string.Empty;
             if (ifPrefix.Success)

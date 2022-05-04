@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace TSQLLint.Common.Tests.Helpers
 {
     [TestFixture]
-    public class FixLineActionsTests
+    public partial class FixLineActionsTests
     {
         private List<string> Lines;
         private FileLineActions Subject;
@@ -93,7 +93,7 @@ namespace TSQLLint.Common.Tests.Helpers
         public void ReplaceAt()
         {
             var column = Lines[2].IndexOf("line") + 1;
-            Violations.Add(new RuleViolation(3, column));
+            Violations.Add(new TestRuleViolation(3, column));
 
             Subject.RepaceInlineAt(2, 0, "THIS");
 
@@ -105,7 +105,7 @@ namespace TSQLLint.Common.Tests.Helpers
         public void ReplaceAtLonger()
         {
             var column = Lines[2].IndexOf("line") + 1;
-            Violations.Add(new RuleViolation(3, column));
+            Violations.Add(new TestRuleViolation(3, column));
 
             Subject.RepaceInlineAt(2, 0, "THIS", 5);
 
@@ -162,29 +162,8 @@ namespace TSQLLint.Common.Tests.Helpers
         {
             Violations = new List<IRuleViolation>
             {
-                new RuleViolation(3)
+                new TestRuleViolation(3)
             };
-        }
-
-        private class RuleViolation : IRuleViolation
-        {
-            public RuleViolation(int line, int column = 1)
-            {
-                Line = line;
-                Column = column;
-            }
-
-            public int Column { get; set; } = 1;
-
-            public string FileName { get; }
-
-            public int Line { get; set; } = 1;
-
-            public string RuleName { get; }
-
-            public RuleViolationSeverity Severity { get; }
-
-            public string Text { get; }
         }
     }
 }

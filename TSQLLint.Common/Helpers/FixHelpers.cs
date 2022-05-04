@@ -42,7 +42,7 @@ namespace TSQLLint.Common
             return checker.Nodes;
         }
 
-        public static List<T> FindNodes<T>(TSqlStatement statement, Func<T, bool> where = null)
+        public static List<T> FindNodes<T>(TSqlFragment statement, Func<T, bool> where = null)
             where T : TSqlFragment
         {
             var checker = new FindViolatingNodeVisitor<T>(where);

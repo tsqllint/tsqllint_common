@@ -72,7 +72,7 @@ done
 info "pushing to Nuget"
 
 dotnet nuget push \
-    "$ARTIFACTS_DIR/TSQLLint.$VERSION.nupkg" \
+    "$ARTIFACTS_DIR/TSQLLint.Common.$VERSION.nupkg" \
     --api-key "$NUGET_API_KEY"  \
     --source https://api.nuget.org/v3/index.json
 

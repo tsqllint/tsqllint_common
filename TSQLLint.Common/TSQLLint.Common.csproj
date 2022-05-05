@@ -10,6 +10,7 @@
 		<PackageTags>linting;mssql;tsql</PackageTags>
 		<Copyright>Copyright 2022</Copyright>
 		<Version Condition=" '$(ProjectAVersion)' != '' ">$(ProjectAVersion)</Version>
+        <PackageOutputPath>./artifacts</PackageOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>

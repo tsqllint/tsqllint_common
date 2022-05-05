@@ -50,6 +50,7 @@ do
         "$PROJECT_ROOT/TSQLLint.Common/TSQLLint.Common.csproj" \
         -c Release \
         -r "$PLATFORM" \
+        -f "net6.0" \
         /p:Version="$VERSION" \
         -o "$OUT_DIR"
 

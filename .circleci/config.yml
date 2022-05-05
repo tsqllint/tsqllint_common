@@ -1,6 +1,4 @@
 version: 2.1
-orbs:
-  slack: circleci/slack@4.6.1
 jobs:
 
   build:
@@ -28,17 +26,6 @@ jobs:
           path: /artifacts/win-x64.tgz
       - store_artifacts:
           path: /artifacts/win-x86.tgz
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-
-  request approval:
-    docker:
-      - image: circleci/node:4.8.2
-    steps:
-      - slack/notify:
-          event: pass
-          template: basic_on_hold_1
 
   package and push to nuget:
     docker:
@@ -48,9 +35,6 @@ jobs:
       - run:
           name: release
           command: ./scripts/dotnet_package.sh
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
       - save_cache:
           paths:
             - artifacts
@@ -66,12 +50,6 @@ jobs:
       - run:
           name: push artifacts to github release
           command: ./scripts/github_create_release.sh
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
 
 workflows:
 
@@ -99,18 +77,8 @@ workflows:
               ignore: /.*/
             tags:
               only: /^[0-9]+(\.[0-9]+)*$/
-      - request approval:
-          requires:
-            - build and notify
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^[0-9]+(\.[0-9]+)*$/
       - wait for approval:
           type: approval
-          requires:
-            - request approval
           filters:
             branches:
               ignore: /.*/

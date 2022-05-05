@@ -24,7 +24,7 @@ namespace TSQLLint.Common
             return (getFragment(node), node);
         }
 
-        public static List<T> FindNodes<T>(List<string> fileLines)
+        public static List<T> FindNodes<T>(List<string> fileLines, Func<T, bool> where = null)
              where T : TSqlFragment
         {
             using var rdr = new StringReader(string.Join("\n", fileLines));
@@ -36,9 +36,17 @@ namespace TSQLLint.Common
                 throw new Exception($"Parsing failed. {string.Join(". ", errors.Select(x => x.Message))}");
             }
 
-            var checker = new FindViolatingNodeVisitor<T>();
+            var checker = new FindViolatingNodeVisitor<T>(where);
             tree.Accept(checker);
 
+            return checker.Nodes;
+        }
+
+        public static List<T> FindNodes<T>(TSqlFragment statement, Func<T, bool> where = null)
+            where T : TSqlFragment
+        {
+            var checker = new FindViolatingNodeVisitor<T>(where);
+            statement.Accept(checker);
             return checker.Nodes;
         }
 
@@ -58,9 +66,18 @@ namespace TSQLLint.Common
             return GetIndent(fileLines[statement.StartLine - 1]);
         }
 
+        public static string GetString(TSqlFragment fragment)
+        {
+            return string.Join(string.Empty, fragment.ScriptTokenStream
+                .Where((x, i) =>
+                    i >= fragment.FirstTokenIndex
+                    && i <= fragment.LastTokenIndex)
+                .Select(x => x.Text));
+        }
+
         private static string GetIndent(string ifLine)
         {
-            var ifPrefix = new Regex(@"^\s").Match(ifLine);
+            var ifPrefix = new Regex(@"^\s+").Match(ifLine);
 
             var indent = string.Empty;
             if (ifPrefix.Success)
@@ -74,11 +91,17 @@ namespace TSQLLint.Common
         public class FindViolatingNodeVisitor<T> : TSqlFragmentVisitor
             where T : TSqlFragment
         {
+            private readonly Func<T, bool> Where;
             public List<T> Nodes = new List<T>();
+
+            public FindViolatingNodeVisitor(Func<T, bool> where = null)
+            {
+                Where = where;
+            }
 
             public override void Visit(TSqlFragment node)
             {
-                if (node is T fragment)
+                if (node is T fragment && (Where == null || Where(fragment)))
                 {
                     Nodes.Add(fragment);
                 }

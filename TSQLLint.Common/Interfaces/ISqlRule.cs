@@ -6,6 +6,8 @@ namespace TSQLLint.Common
     {
         string RULE_NAME { get; }
 
+        RuleViolationSeverity RULE_SEVERITY { get; }
+
         public void FixViolation(List<string> fileLines, IRuleViolation ruleViolation, FileLineActions actions);
     }
 }

@@ -1,142 +1,120 @@
 #!/bin/bash
 
-# enable for bash debugging
-#set -x
+# Setup for script debugging
+# set -x
 
-# fail script if a cmd fails
-set -e
+# Fail script if a command fails or if a piped command fails
+set -eo pipefail
 
-# fail script if piped command fails
-set -o pipefail
-
+# Terminal color codes
 NO_COLOR='\033[0m'
-
 BLUE='\033[0;34m'
-info () {
-    MESSAGE=$1
-    printf "${BLUE}INFO:${NO_COLOR} $MESSAGE\n"
+RED='\033[0;31m'
+
+info() {
+    printf "${BLUE}INFO:${NO_COLOR} %s\n" "$1"
 }
 
-RED='\033[0;31m'
-error () {
-    MESSAGE=$1
-    printf "${RED}ERROR:${NO_COLOR} $MESSAGE\n"
+error() {
+    printf "${RED}ERROR:${NO_COLOR} %s\n" "$1" >&2
     exit 1
 }
 
-function confirmRunningInDocker() {
+# Ensure this script runs in Docker
+confirmRunningInDocker() {
     if [ ! -f /.dockerenv ]; then
-        error "This script must be run from within a docker container. For local development use the ci_run_local.sh script.";
+        error "This script must be run from within a Docker container."
     else
-        info "script is running in container"
+        info "Script is running in a container."
     fi
 }
 
-info "initializing"
+info "Initializing"
 
+# Determine the GIT state
 GIT_STATE="clean"
 if [[ $(git diff --stat) != '' ]]; then
   GIT_STATE="dirty"
 fi
 
+# Process the branch name
 BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
+BRANCH_NAME="${BRANCH_NAME//[_]/-}" # replace underscores with -
+BRANCH_NAME="${BRANCH_NAME//[\/]/-}" # replace slashes with -
 
-# replace underscores with -
-BRANCH_NAME="${BRANCH_NAME//[_]/-}"
-
-# replace slashes with -
-BRANCH_NAME="${BRANCH_NAME//[\/]/-}"
-
+# Process versioning information
 TAG_COMMIT="$(git rev-list --abbrev-commit --tags --max-count=1)"
 TAG="$(git describe --abbrev=0 --tags "${TAG_COMMIT}" 2>/dev/null || true)"
 
 HEAD_COMMIT="$(git rev-parse --short HEAD)"
 HEAD_COMMIT_DATE=$(git log -1 --format=%cd --date=format:'%Y%m%d')
 
+# Define directories
 ARTIFACTS_DIR="$PROJECT_ROOT/artifacts"
-mkdir -p "$ARTIFACTS_DIR"
-
 COVERAGE_DIR="$ARTIFACTS_DIR/coverage"
-mkdir -p "$COVERAGE_DIR"
 
+# Ensure directories exist
+for dir in "$ARTIFACTS_DIR" "$COVERAGE_DIR"; do
+  mkdir -p "$dir"
+done
+
+# Gather commit info
 COMMIT_AUTHOR=$(git show -s --pretty=format:"%cn")
 COMMIT_AUTHOR_EMAIL=$(git show -s --pretty=format:"%ce")
 COMMIT_MESSAGE=$(git show -s --pretty=format:"%s")
 
 DOTNET_PACKAGE_DIR="$PROJECT_ROOT/packages"
 
+# Determine if this is a release
 RELEASE="false"
 if [ "$HEAD_COMMIT" == "$TAG_COMMIT" ] && [ "$GIT_STATE" == "clean" ]; then
-	VERSION="$TAG"
+    VERSION="$TAG"
     RELEASE="true"
 else
-	VERSION="$TAG"-"$BRANCH_NAME"-"$HEAD_COMMIT"-"$HEAD_COMMIT_DATE"-"$GIT_STATE"
+    VERSION="${TAG}-${BRANCH_NAME}-${HEAD_COMMIT}-${HEAD_COMMIT_DATE}-${GIT_STATE}"
 fi
 
-echo "###############################################################"
-echo "# BRANCH_NAME:          ${BRANCH_NAME}                         "
-echo "# GIT_STATE:            ${GIT_STATE}                           "
-echo "# RELEASE:              ${RELEASE}                             "
-echo "# TAG:                  ${TAG}                                 "
-echo "# TAG_COMMIT:           ${TAG_COMMIT}                          "
-echo "# HEAD_COMMIT:          ${HEAD_COMMIT}                         "
-echo "# HEAD_COMMIT_DATE:     ${HEAD_COMMIT_DATE}                    "
-echo "# VERSION:              ${VERSION}                             "
-echo "# COMMIT_AUTHOR:        $COMMIT_AUTHOR                         "
-echo "# COMMIT_AUTHOR_EMAIL:  $COMMIT_AUTHOR_EMAIL                   "
-echo "# COMMIT_MESSAGE:       $COMMIT_MESSAGE                        "
-echo "# PROJECT_ROOT:         $PROJECT_ROOT                          "
-echo "# SCRIPT_DIR:           $SCRIPT_DIR                            "
-echo "# ARTIFACTS_DIR:        $ARTIFACTS_DIR                         "
-echo "# COVERAGE_DIR:         $COVERAGE_DIR                          "
-echo "# DOTNET_PACKAGE_DIR:   $DOTNET_PACKAGE_DIR                    "
-echo "###############################################################"
+# Printing environment information
+printf "###############################################################\n"
+printf "# Environment variables:\n"
+printf "# BRANCH_NAME:          %s\n" "$BRANCH_NAME"
+printf "# GIT_STATE:            %s\n" "$GIT_STATE"
+printf "# RELEASE:              %s\n" "$RELEASE"
+printf "# TAG:                  %s\n" "$TAG"
+printf "# TAG_COMMIT:           %s\n" "$TAG_COMMIT"
+printf "# HEAD_COMMIT:          %s\n" "$HEAD_COMMIT"
+printf "# HEAD_COMMIT_DATE:     %s\n" "$HEAD_COMMIT_DATE"
+printf "# VERSION:              %s\n" "$VERSION"
+printf "# COMMIT_AUTHOR:        %s\n" "$COMMIT_AUTHOR"
+printf "# COMMIT_AUTHOR_EMAIL:  %s\n" "$COMMIT_AUTHOR_EMAIL"
+printf "# COMMIT_MESSAGE:       %s\n" "$COMMIT_MESSAGE"
+printf "# PROJECT_ROOT:         %s\n" "$PROJECT_ROOT"
+printf "# SCRIPT_DIR:           %s\n" "$SCRIPT_DIR"
+printf "# ARTIFACTS_DIR:        %s\n" "$ARTIFACTS_DIR"
+printf "# COVERAGE_DIR:         %s\n" "$COVERAGE_DIR"
+printf "# DOTNET_PACKAGE_DIR:   %s\n" "$DOTNET_PACKAGE_DIR"
+printf "###############################################################\n"
 
-info "verifying variables"
+# Verification of variables
+declare -a vars_to_check=("BRANCH_NAME" "GIT_STATE" "RELEASE" "TAG" "TAG_COMMIT" "HEAD_COMMIT" "HEAD_COMMIT_DATE" "VERSION" "PROJECT_ROOT" "SCRIPT_DIR" "COVERAGE_DIR" "DOTNET_PACKAGE_DIR")
+for var in "${vars_to_check[@]}"; do
+  [ -n "${!var}" ] || error "$var is required and not set."
+done
 
-[ -n "$BRANCH_NAME" ]          || { error "BRANCH_NAME is required and not set"; }
-[ -n "$GIT_STATE" ]            || { error "GIT_STATE is required and not set"; }
-[ -n "$RELEASE" ]              || { error "RELEASE is required and not set"; }
-[ -n "$TAG" ]                  || { error "TAG is required and not set"; }
-[ -n "$TAG_COMMIT" ]           || { error "TAG_COMMIT is required and not set"; }
-[ -n "$HEAD_COMMIT" ]          || { error "HEAD_COMMIT is required and not set"; }
-[ -n "$HEAD_COMMIT_DATE" ]     || { error "HEAD_COMMIT_DATE is required and not set"; }
-[ -n "$VERSION" ]              || { error "VERSION is required and not set"; }
-[ -n "$PROJECT_ROOT" ]         || { error "PROJECT_ROOT is required and not set"; }
-[ -n "$SCRIPT_DIR" ]           || { error "SCRIPT_DIR is required and not set"; }
-[ -n "$COVERAGE_DIR" ]         || { error "COVERAGE_DIR is required and not set"; }
-[ -n "$DOTNET_PACKAGE_DIR" ]   || { error "DOTNET_PACKAGE_DIR is required and not set"; }
-
-info "verifying version number"
-
-if [[ $VERSION =~ ^[0-9]+\.[0-9]+ ]]; then
-    _=${BASH_REMATCH[0]}
-else
+info "Verifying version number"
+if ! [[ $VERSION =~ ^[0-9]+\.[0-9]+ ]]; then
     error "Version number failed validation: '$VERSION'"
 fi
 
-info "exporting variables"
+# Exporting variables
+export BRANCH_NAME GIT_STATE RELEASE TAG TAG_COMMIT HEAD_COMMIT HEAD_COMMIT_DATE VERSION PROJECT_ROOT SCRIPT_DIR COVERAGE_DIR DOTNET_PACKAGE_DIR
 
-export BRANCH_NAME
-export GIT_STATE
-export RELEASE
-export TAG
-export TAG_COMMIT
-export HEAD_COMMIT
-export HEAD_COMMIT_DATE
-export VERSION
-export PROJECT_ROOT
-export SCRIPT_DIR
-export COVERAGE_DIR
-export DOTNET_PACKAGE_DIR
-
-info "verifying directories"
-
-[ ! -d "$PROJECT_ROOT" ]       && error "PROJECT_ROOT does not exist $PROJECT_ROOT"
-[ ! -d "$SCRIPT_DIR" ]         && error "SCRIPT_DIR does not exist: $SCRIPT_DIR"
-[ ! -d "$ARTIFACTS_DIR" ]      && error "ARTIFACTS_DIR does not exist: $ARTIFACTS_DIR"
-[ ! -d "$COVERAGE_DIR" ]       && error "COVERAGE_DIR does not exist: $COVERAGE_DIR"
+# Verification of directories
+declare -a dirs_to_verify=("$PROJECT_ROOT" "$SCRIPT_DIR" "$ARTIFACTS_DIR" "$COVERAGE_DIR")
+for dir in "${dirs_to_verify[@]}"; do
+  [ -d "$dir" ] || error "$dir does not exist: $dir"
+done
 
 # DOTNET_PACKAGE_DIR should not exist before dotnet restore
 
-info "initialization complete"
+info "Initialization complete."

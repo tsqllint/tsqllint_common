@@ -19,63 +19,75 @@ cd "$PROJECT_ROOT"
 
 source "$SCRIPT_DIR/utils.sh"
 
+confirmRunningInDocker # Ensures the script is running in Docker
+
+info "Initializing"
+
+# Variables expected to be set from utils.sh or elsewhere
+# VERSION, ARTIFACTS_DIR, NUGET_API_KEY
+
+[ -n "$VERSION" ] || error "VERSION is not set"
+[ -n "$ARTIFACTS_DIR" ] || error "ARTIFACTS_DIR is not set"
+
 if [ "$RELEASE" == "false" ]; then
-    info "not a release build exiting now"
-#    exit 0
+    info "Not a release build. Exiting now."
+    exit 0
 else
-    info "starting release"
+    info "Starting release"
 fi
 
-info "packing project"
+info "Packing project"
 
 dotnet pack \
     "$PROJECT_ROOT/TSQLLint.Common.sln" \
-    -p:VERSION="$VERSION" \
+    -p:PackageVersion="$VERSION" \
     --configuration Release \
     --output "$ARTIFACTS_DIR"
 
-info "build and archive assemblies"
+info "Build and archive assemblies"
 
 PLATFORMS=("win-x86" "win-x64" "win-arm64" "osx-x64" "osx-arm64" "linux-x64" "linux-musl-x64" "linux-musl-arm64" "linux-arm" "linux-arm64")
 for PLATFORM in "${PLATFORMS[@]}"
 do
-    info "building assemblies for platform $PLATFORM"
+    info "Building assemblies for platform $PLATFORM"
 
     OUT_DIR="$ARTIFACTS_DIR/$PLATFORM"
     mkdir -p "$OUT_DIR"
 
-    info "creating assemblies directory $OUT_DIR"
+    info "Creating assemblies directory $OUT_DIR"
 
     dotnet publish \
         "$PROJECT_ROOT/TSQLLint.Common/TSQLLint.Common.csproj" \
         -c Release \
         -r "$PLATFORM" \
-        -f "net6.0" \
-        /p:Version="$VERSION" \
+        --self-contained true \
+        -p:PublishSingleFile=true \
+        -p:PublishTrimmed=true \
+        -p:Version="$VERSION" \
         -o "$OUT_DIR"
 
-    info "archiving assemblies for platform $PLATFORM"
+    info "Archiving assemblies for platform $PLATFORM"
 
     # change directory to reduce directory depth in archive file
-    info "changing directory to $ARTIFACTS_DIR"
+    info "Changing directory to $ARTIFACTS_DIR"
     cd "$ARTIFACTS_DIR"
 
-    tar -zcf "$ARTIFACTS_DIR/$PLATFORM.tgz" "$PLATFORM"
+    tar -zcf "$PLATFORM.tgz" "$PLATFORM"
     rm -rf "$PLATFORM"
 
-    info "changing directory to $PROJECT_ROOT"
+    info "Changing directory to $PROJECT_ROOT"
     cd "$PROJECT_ROOT"
 done
 
 [ -n "$NUGET_API_KEY" ] || { error "NUGET_API_KEY is required and not set, aborting"; }
 
-info "pushing to Nuget"
+info "Pushing to Nuget"
 
 dotnet nuget push \
-    "$ARTIFACTS_DIR/TSQLLint.Common.$VERSION.nupkg" \
-    --api-key "$NUGET_API_KEY"  \
-    --source https://api.nuget.org/v3/index.json
+    "${ARTIFACTS_DIR}/TSQLLint.Common.${VERSION}.nupkg" \
+    --api-key "${NUGET_API_KEY}" \
+    --source "https://api.nuget.org/v3/index.json"
 
-info "done"
+info "Done"
 
 exit 0

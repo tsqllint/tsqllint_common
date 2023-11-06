@@ -36,7 +36,7 @@ info "Logging into GitHub CLI..."
 ls -lah "$ARTIFACTS_DIR"
 
 # Read the GitHub token from the file and login
-cat "$GITHUB_TOKEN_FILE" > .githubtoken
+echo "${GITHUB_TOKEN_FILE}" > .githubtoken
 gh auth login --with-token < .githubtoken
 rm .githubtoken
 

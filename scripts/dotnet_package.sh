@@ -60,6 +60,7 @@ do
         "$PROJECT_ROOT/TSQLLint.Common/TSQLLint.Common.csproj" \
         -c Release \
         -r "$PLATFORM" \
+        --framework "net6.0" \ 
         --self-contained true \
         -p:PublishSingleFile=true \
         -p:PublishTrimmed=true \

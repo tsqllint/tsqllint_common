@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ################################################################################
-# a script to build, test, and push coverage results to coveralls
+# a script to build and test the project locally
 ################################################################################
 
 # enable for bash debugging
@@ -20,7 +20,9 @@ cd "$PROJECT_ROOT"
 
 source "$SCRIPT_DIR/utils.sh"
 
-confirmRunningInDocker
+if [ -f /.dockerenv ]; then
+    confirmRunningInDocker
+fi
 
 info "restoring project"
 
@@ -37,18 +39,6 @@ dotnet build \
     --configuration Release \
     --no-restore
 
-info "calculating test coverage"
-
-command -v csmacnz.Coveralls >/dev/null 2>&1 || {
-    info "installing coveralls tooling"
-    dotnet tool install coveralls.net --global --version 3.0.0;
-}
-
-command -v reportgenerator >/dev/null 2>&1 || {
-    info "installing report generator tooling"
-    dotnet tool install dotnet-reportgenerator-globaltool --global --version 5.0.2;
-}
-
 info "running test project"
 
 dotnet test \
@@ -57,17 +47,6 @@ dotnet test \
     --settings "$PROJECT_ROOT/coverlet.runsettings" \
     --results-directory "$COVERAGE_DIR" \
     "$PROJECT_ROOT/TSQLLint.Common.sln"
-
-COVERAGE_FILE="$(find $COVERAGE_DIR -name coverage.opencover.xml)"
-info "COVERAGE_FILE: $COVERAGE_FILE"
-
-reportgenerator \
-    -reports:$COVERAGE_FILE \
-    -targetdir:$COVERAGE_DIR/report
-
-# change directory to reduce directory depth in archive file
-cd "$COVERAGE_DIR"
-tar -zcf $COVERAGE_DIR/coverage-report.tgz report
 
 info "done"
 

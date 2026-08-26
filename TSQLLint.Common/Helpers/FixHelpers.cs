@@ -21,6 +21,11 @@ namespace TSQLLint.Common
                        fragment?.StartColumn == ruleViolation.Column;
             });
 
+            if (node == null)
+            {
+                return default;
+            }
+
             return (getFragment(node), node);
         }
 
@@ -28,7 +33,7 @@ namespace TSQLLint.Common
              where T : TSqlFragment
         {
             using var rdr = new StringReader(string.Join("\n", fileLines));
-            var parser = new TSql150Parser(true, SqlEngineType.All);
+            var parser = new TSql160Parser(true, SqlEngineType.All);
             var tree = parser.Parse(rdr, out var errors);
 
             if (errors?.Any() == true)
@@ -37,7 +42,10 @@ namespace TSQLLint.Common
             }
 
             var checker = new FindViolatingNodeVisitor<T>(where);
-            tree.Accept(checker);
+
+            // Parse can return a null tree on severe errors even when the error
+            // collection is empty; the null-conditional skips Accept and returns no nodes.
+            tree?.Accept(checker);
 
             return checker.Nodes;
         }

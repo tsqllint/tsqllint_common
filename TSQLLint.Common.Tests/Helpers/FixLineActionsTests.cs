@@ -84,9 +84,54 @@ namespace TSQLLint.Common.Tests.Helpers
         {
             var expected = Lines[0].Substring(4);
 
+            // Violation on the edited line, after the removal point: its column must shift left.
+            var onEditedLine = new TestRuleViolation(1, 9);
+            // Control on another line whose column equals the edited line number (1):
+            // it must NOT be touched by an edit to line 1.
+            var onOtherLine = new TestRuleViolation(3, 1);
+            Violations.Clear();
+            Violations.Add(onEditedLine);
+            Violations.Add(onOtherLine);
+
             Subject.RemoveInLine(0, 0, 4);
 
             Assert.AreEqual(expected, Lines[0]);
+            Assert.That(onEditedLine.Column, Is.EqualTo(5));
+            Assert.That(onOtherLine.Column, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void RemoveInLine_ViolationInsideRemovedSpan_ClampsToStart()
+        {
+            // Remove "This " (chars 0..4) from line 1. A violation at Column 3 ('i')
+            // points inside the removed span, so its character is gone; it must clamp
+            // to the start of the removal (Column 1), not go to a negative column.
+            var insideSpan = new TestRuleViolation(1, 3);
+            Violations.Clear();
+            Violations.Add(insideSpan);
+
+            Subject.RemoveInLine(0, 0, 5);
+
+            // Old code did 3 - 5 = -2; clamp keeps it at charIndex + 1 = 1.
+            Assert.That(insideSpan.Column, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void RemoveInLine_RemovalMidLine_ClampsAndShiftsAroundSpan()
+        {
+            // Line 1 = "Hi. This is line 1". Remove 5 chars starting at index 4 ("This ").
+            // Violation at Column 6 is inside the span -> clamp to charIndex + 1 = 5.
+            // Violation at Column 12 is after the span -> shift left by 5 to Column 7.
+            var insideSpan = new TestRuleViolation(1, 6);
+            var afterSpan = new TestRuleViolation(1, 12);
+            Violations.Clear();
+            Violations.Add(insideSpan);
+            Violations.Add(afterSpan);
+
+            Subject.RemoveInLine(0, 4, 5);
+
+            Assert.That(insideSpan.Column, Is.EqualTo(5));
+            Assert.That(afterSpan.Column, Is.EqualTo(7));
         }
 
         [Test]
@@ -95,7 +140,7 @@ namespace TSQLLint.Common.Tests.Helpers
             var column = Lines[2].IndexOf("line") + 1;
             Violations.Add(new TestRuleViolation(3, column));
 
-            Subject.RepaceInlineAt(2, 0, "THIS");
+            Subject.ReplaceInlineAt(2, 0, "THIS");
 
             Assert.AreEqual(1, Violations[0].Column);
             Assert.AreEqual(column, Violations[1].Column);
@@ -107,10 +152,41 @@ namespace TSQLLint.Common.Tests.Helpers
             var column = Lines[2].IndexOf("line") + 1;
             Violations.Add(new TestRuleViolation(3, column));
 
-            Subject.RepaceInlineAt(2, 0, "THIS", 5);
+            Subject.ReplaceInlineAt(2, 0, "THIS", 5);
 
             Assert.AreEqual(1, Violations[0].Column);
             Assert.AreEqual(column - 1, Violations[1].Column);
+        }
+
+        [Test]
+        public void ReplaceAtGrowing()
+        {
+            // "This is line 3": violation on the 'i' of "This" (0-based index 2 => Column 3).
+            Violations.Add(new TestRuleViolation(3, 3));
+
+            // Replace the 2 chars "Th" with 6 chars: net growth of +4.
+            Subject.ReplaceInlineAt(2, 0, "XXXXXX", 2);
+
+            // The default violation at Column 1 sits inside the replaced region and is not shifted.
+            Assert.That(Violations[0].Column, Is.EqualTo(1));
+            // The 'i' moves from Column 3 to Column 7; the buggy threshold left it at 3.
+            Assert.That(Violations[1].Column, Is.EqualTo(7));
+        }
+
+        [Test]
+        public void RepaceInlineAt_Obsolete_DelegatesToReplaceInlineAt()
+        {
+            var column = Lines[2].IndexOf("line") + 1;
+            Violations.Add(new TestRuleViolation(3, column));
+
+            // The misspelled method is obsolete but must still behave identically.
+#pragma warning disable CS0618 // Type or member is obsolete
+            Subject.RepaceInlineAt(2, 0, "THIS");
+#pragma warning restore CS0618
+
+            Assert.That(Lines[2], Is.EqualTo("THIS is line 3"));
+            Assert.That(Violations[0].Column, Is.EqualTo(1));
+            Assert.That(Violations[1].Column, Is.EqualTo(column));
         }
 
         [Test]
@@ -144,6 +220,19 @@ namespace TSQLLint.Common.Tests.Helpers
             Subject.RemoveRange(0, 2);
 
             Assert.AreEqual(1, Violations[0].Line);
+        }
+
+        [Test]
+        public void UpdateLine()
+        {
+            var content = "Replacement content";
+
+            Subject.UpdateLine(2, content);
+
+            Assert.That(Lines[2], Is.EqualTo(content));
+            // UpdateLine replaces the whole line and does not touch violation positions.
+            Assert.That(Violations[0].Line, Is.EqualTo(3));
+            Assert.That(Violations[0].Column, Is.EqualTo(1));
         }
 
         private void SetupDefaultLines()
